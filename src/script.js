@@ -1,40 +1,75 @@
-import './style.css'
-import * as THREE from 'three'
+import "./style.css";
+import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
+import * as THREE from "three";
 
+// Textures
+import marsTexture from "../img/mars_1k_color.jpg";
+import sunTexture from "../img/sunmap.jpg";
 // Canvas
-const canvas = document.querySelector('canvas.webgl')
+const canvas = document.querySelector("canvas.webgl");
 
 // Scene
-const scene = new THREE.Scene()
+const scene = new THREE.Scene();
 
 /**
  * Object
  */
-const geometry = new THREE.BoxGeometry(1, 1, 1)
-const material = new THREE.MeshBasicMaterial({ color: 0xff0000 })
-const mesh = new THREE.Mesh(geometry, material)
-scene.add(mesh)
+const textureLoader = new THREE.TextureLoader();
+const marsGeometry = new THREE.SphereGeometry(0.5, 64, 64);
+const sunGeometry = new THREE.SphereGeometry(0.5, 64, 64);
+const sunMaterial = new THREE.MeshBasicMaterial({
+  map: textureLoader.load(sunTexture),
+});
+const marsMaterial = new THREE.MeshBasicMaterial({
+  map: textureLoader.load(marsTexture),
+});
+const marsMesh = new THREE.Mesh(marsGeometry, marsMaterial);
+const sunMesh = new THREE.Mesh(sunGeometry, sunMaterial);
+scene.add(sunMesh);
+scene.add(marsMesh);
 
 /**
  * Sizes
  */
 const sizes = {
-    width: 800,
-    height: 600
-}
+  width: 800,
+  height: 600,
+};
 
 /**
  * Camera
  */
-const camera = new THREE.PerspectiveCamera(75, sizes.width / sizes.height)
-camera.position.z = 3
-scene.add(camera)
+const camera = new THREE.PerspectiveCamera(75, sizes.width / sizes.height);
+camera.position.z = 3;
+scene.add(camera);
 
 /**
  * Renderer
  */
 const renderer = new THREE.WebGLRenderer({
-    canvas: canvas
-})
-renderer.setSize(sizes.width, sizes.height)
-renderer.render(scene, camera)
+  canvas: canvas,
+});
+renderer.setSize(sizes.width, sizes.height);
+renderer.render(scene, camera);
+
+// Controls
+const orbit = new OrbitControls(camera, renderer.domElement);
+orbit.update();
+
+/**
+ * Animation
+ */
+const clock = new THREE.Clock();
+const tick = () => {
+  // Update objects
+  const elapsedTime = clock.getElapsedTime();
+  marsMesh.rotation.y = elapsedTime * 0.1;
+  marsMesh.position.y = Math.sin(elapsedTime);
+  marsMesh.position.x = 5 * Math.cos(elapsedTime);
+
+  // Render
+  renderer.render(scene, camera);
+  // Call tick again on the next frame
+  window.requestAnimationFrame(tick);
+};
+tick();
