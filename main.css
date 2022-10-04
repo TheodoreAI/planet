@@ -1,1 +1,22 @@
+/* remove margin or padding */
+* {
+  margin: 0;
+  padding: 0;
+}
 
+/* fix the canvas on the top left using its webgl class to select it */
+.webgl {
+  position: fixed;
+  top: 0;
+  left: 0;
+  outline: none;
+}
+
+/* To remove any type of scrolling even on touch screens  */
+html,
+body {
+  overflow: hidden;
+}
+
+
+/*# sourceMappingURL=main.css.map*/
